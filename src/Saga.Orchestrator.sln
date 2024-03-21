@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{2212193D-6916-43EB-B61A-D6A0EA9941D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saga.Orchestrator.API", "Services\Saga.Orchestrator.API\Saga.Orchestrator.API.csproj", "{CDACC5F8-47E1-468C-A9D8-4A85B42E16C0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workers", "Workers", "{F9641690-C733-4CB5-97A5-490766E9ADDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saga.Orchestrator.Worker", "Workers\Saga.Orchestrator.Worker\Saga.Orchestrator.Worker.csproj", "{DECE2253-9395-4D42-9E3A-DF38BFC3D922}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Building Blocks", "Building Blocks", "{C5D19126-E19B-4F9C-81B6-32AA231B53C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saga.Orchestrator.Core", "Building Blocks\Saga.Orchestrator.Core\Saga.Orchestrator.Core.csproj", "{353C1DA6-55C5-49A8-959A-3CC689343C73}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CDACC5F8-47E1-468C-A9D8-4A85B42E16C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDACC5F8-47E1-468C-A9D8-4A85B42E16C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDACC5F8-47E1-468C-A9D8-4A85B42E16C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDACC5F8-47E1-468C-A9D8-4A85B42E16C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DECE2253-9395-4D42-9E3A-DF38BFC3D922}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DECE2253-9395-4D42-9E3A-DF38BFC3D922}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DECE2253-9395-4D42-9E3A-DF38BFC3D922}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DECE2253-9395-4D42-9E3A-DF38BFC3D922}.Release|Any CPU.Build.0 = Release|Any CPU
+		{353C1DA6-55C5-49A8-959A-3CC689343C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{353C1DA6-55C5-49A8-959A-3CC689343C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{353C1DA6-55C5-49A8-959A-3CC689343C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{353C1DA6-55C5-49A8-959A-3CC689343C73}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CDACC5F8-47E1-468C-A9D8-4A85B42E16C0} = {2212193D-6916-43EB-B61A-D6A0EA9941D0}
+		{DECE2253-9395-4D42-9E3A-DF38BFC3D922} = {F9641690-C733-4CB5-97A5-490766E9ADDE}
+		{353C1DA6-55C5-49A8-959A-3CC689343C73} = {C5D19126-E19B-4F9C-81B6-32AA231B53C9}
+	EndGlobalSection
+EndGlobal
