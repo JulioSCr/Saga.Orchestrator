@@ -17,7 +17,6 @@ namespace Saga.Orchestrator.Worker.Application.StateMachines
             Event(() => FullExportStatusRequested, x =>
             {
                 x.CorrelateById(m => m.Message.ExportId);
-                x.ConfigureConsumeTopology = false;
                 x.OnMissingInstance(m => m.ExecuteAsync(async context =>
                 {
                     if (context.RequestId.HasValue)
@@ -25,6 +24,7 @@ namespace Saga.Orchestrator.Worker.Application.StateMachines
                         await context.RespondAsync<IFullExportNotFound>(new { context.Message.ExportId });
                     }
                 }));
+                x.ReadOnly = true;
             });
 
             InstanceState(x => x.CurrentState);
