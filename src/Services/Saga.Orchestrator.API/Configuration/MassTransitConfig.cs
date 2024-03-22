@@ -21,8 +21,7 @@ namespace Saga.Orchestrator.API.Configuration
             });
 
                 mt.AddRequestClient<ISubmitFullExport>(new Uri("exchange:submit-full-export"));
-                //mt.AddRequestClient<CheckStatus>(new Uri("queue:full-export-state"));
-                mt.AddRequestClient<ICheckStatus>();
+                mt.AddRequestClient<ICheckStatus>(new Uri("queue:full-export-state"));
             });
         }
     }
