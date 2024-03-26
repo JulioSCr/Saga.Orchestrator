@@ -1,5 +1,5 @@
 ﻿using MassTransit;
-using Saga.Orchestrator.Worker.Application.Contracts.Events;
+using Saga.Orchestrator.Worker.Application.Contracts;
 using Saga.Orchestrator.Worker.Application.StateMachines;
 
 namespace Saga.Orchestrator.Worker.Application.Activities

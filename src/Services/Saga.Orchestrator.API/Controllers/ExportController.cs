@@ -1,31 +1,34 @@
 ﻿using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Saga.Orchestrator.API.Models.Requests;
+using Saga.Orchestrator.Core.Api.Controllers;
 using Saga.Orchestrator.Core.DomainObjects;
-using Saga.Orchestrator.Core.Messages.IntegrationContracts.Commands;
-using Saga.Orchestrator.Core.Messages.IntegrationContracts.Events;
+using Saga.Orchestrator.Core.Messages.Integration.Commands;
+using Saga.Orchestrator.Core.Messages.Integration.Contracts;
+using Saga.Orchestrator.Core.Messages.Integration.Events;
+using Saga.Orchestrator.Core.Messages.Integration.Responses;
 
 namespace Saga.Orchestrator.API.Controllers
 {
     [Route("api/[Controller]")]
     public sealed class ExportController : SagaControllerBase
     {
-        private readonly IRequestClient<ISubmitFullExport> _submitFullExport;
+        private readonly IRequestClient<SubmitFullExportCommand> _submitFullExport;
         private readonly IRequestClient<ICheckStatus> _checkFullExport;
 
-        public ExportController(IRequestClient<ISubmitFullExport> submitFullExportRequestedEvent, IRequestClient<ICheckStatus> checkFullExport)
+        public ExportController(IRequestClient<SubmitFullExportCommand> submitFullExportRequestedEvent, IRequestClient<ICheckStatus> checkFullExport)
         {
             _submitFullExport = submitFullExportRequestedEvent;
             _checkFullExport = checkFullExport;
         }
 
         [HttpGet()]
-        [ProducesResponseType(typeof(IFullExportStatus), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(IFullExportNotFound), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IFullExportStatusResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> GetStatus(Guid id)
         {
-            var tasks = _checkFullExport.GetResponse<IFullExportStatus, IFullExportNotFound>(new
+            var tasks = _checkFullExport.GetResponse<IFullExportStatusResponse, CustomResponse>(new
             {
                 ExportId = id
             });
@@ -44,17 +47,17 @@ namespace Saga.Orchestrator.API.Controllers
             else
             {
                 var response = await notFound;
-                return NotFound(response.Message);
+                return CustomResponse(response.Message);
             }
         }
 
         [HttpPost()]
-        [ProducesResponseType(typeof(IFullExportAccepted), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FullExportAcceptedEvent), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> Export(ExportRequest model)
         {
-            var tasks = _submitFullExport.GetResponse<IFullExportAccepted, IFullExportRejected>(new
+            var tasks = _submitFullExport.GetResponse<FullExportAcceptedEvent, CustomResponse>(new
             {
                 Cpf = new Cpf(model.Cpf),
                 Timestamp = DateTime.UtcNow,
@@ -75,11 +78,11 @@ namespace Saga.Orchestrator.API.Controllers
             if (rejected.IsCompletedSuccessfully)
             {
                 var response = await rejected;
-                AddProcessError(response.Message.Reason);
+                AddProcessError(response.Message.Errors);
                 return CustomResponse();
             }
 
-            AddProcessError("Ocorreu um erro não manipulado");
+            AddProcessError("Ocorreu um erro não esperado");
             return CustomResponse();
         }
     }

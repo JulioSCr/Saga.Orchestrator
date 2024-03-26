@@ -1,6 +1,6 @@
 ﻿using Saga.Orchestrator.Core.DomainObjects;
 
-namespace Saga.Orchestrator.Worker.Application.Contracts.Events
+namespace Saga.Orchestrator.Worker.Application.Contracts
 {
     public interface IFullExportClientSubmitted
     {

@@ -1,9 +1,8 @@
 ﻿using Saga.Orchestrator.Core.DomainObjects;
-using System.Text.Json.Serialization;
 
-namespace Saga.Orchestrator.Core.Messages.IntegrationContracts.Events
+namespace Saga.Orchestrator.Worker.Application.Contracts
 {
-    public interface IFullExportAccepted
+    public interface IBasicDataSent
     {
         Guid ExportId { get; }
         DateTime Timestamp { get; }

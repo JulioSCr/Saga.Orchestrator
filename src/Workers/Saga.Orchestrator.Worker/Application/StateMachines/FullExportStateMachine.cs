@@ -1,9 +1,8 @@
 ﻿using MassTransit;
-using Saga.Orchestrator.Core.Messages.IntegrationContracts.Commands;
-using Saga.Orchestrator.Core.Messages.IntegrationContracts.Events;
+using Saga.Orchestrator.Core.Messages.Integration.Contracts;
+using Saga.Orchestrator.Core.Messages.Integration.Responses;
 using Saga.Orchestrator.Worker.Application.Activities;
-using Saga.Orchestrator.Worker.Application.Contracts.Events;
-using Saga.Orchestrator.Worker.Application.Events;
+using Saga.Orchestrator.Worker.Application.Contracts;
 
 namespace Saga.Orchestrator.Worker.Application.StateMachines
 {
@@ -21,7 +20,10 @@ namespace Saga.Orchestrator.Worker.Application.StateMachines
                 {
                     if (context.RequestId.HasValue)
                     {
-                        await context.RespondAsync<IFullExportNotFound>(new { context.Message.ExportId });
+                        await context.RespondAsync<CustomResponse>(
+                            new CustomResponse(
+                                InVar.Timestamp,
+                                "Não foi possível identificar um processo neste ID."));
                     }
                 }));
                 x.ReadOnly = true;
@@ -52,7 +54,7 @@ namespace Saga.Orchestrator.Worker.Application.StateMachines
                         context.Saga.Cpf ??= context.Message.Cpf.Value;
                     }),
                 When(FullExportStatusRequested)
-                    .RespondAsync(x => x.Init<IFullExportStatus>(new
+                    .RespondAsync(x => x.Init<IFullExportStatusResponse>(new
                     {
                         ExportId = x.Saga.CorrelationId,
                         State = x.Saga.CurrentState

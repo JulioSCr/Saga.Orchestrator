@@ -14,10 +14,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\..\Building Blocks\Saga.Orchestrator.Core\Saga.Orchestrator.Core.csproj" />
     </ItemGroup>
 </Project>
