@@ -34,11 +34,10 @@ namespace Saga.Orchestrator.Worker.Application.StateMachines
                     .Then(context =>
                     {
                         context.Saga.SubmitDate = context.Message.Timestamp;
-                        context.Saga.Cpf = context.Message.Cpf;
+                        context.Saga.Cpf = context.Message.Cpf.Value;
                         context.Saga.Updated = DateTime.UtcNow;
                     })
-                    .Activity(x => x.OfType<SendBasicDataActivity>())
-                    .TransitionTo(BasicDataSent));
+                    .TransitionTo(Submitted));
 
             During(BasicDataSent,
                 When(BasicDataSentEvent)
@@ -50,7 +49,7 @@ namespace Saga.Orchestrator.Worker.Application.StateMachines
                     .Then(context =>
                     {
                         context.Saga.SubmitDate ??= context.Message.Timestamp;
-                        context.Saga.Cpf ??= context.Message.Cpf;
+                        context.Saga.Cpf ??= context.Message.Cpf.Value;
                     }),
                 When(FullExportStatusRequested)
                     .RespondAsync(x => x.Init<IFullExportStatus>(new
@@ -61,11 +60,10 @@ namespace Saga.Orchestrator.Worker.Application.StateMachines
             );
         }
 
-        #region States
+        public State Submitted { get; private set; } = null!;
         public State BasicDataSent { get; private set; } = null!;
         public State ComplementsSent { get; private set; } = null!;
         public State Completed { get; private set; } = null!;
-        #endregion
 
         public Event<IFullExportClientSubmitted> FullExportClientSubmittedEvent { get; private set; } = null!;
         public Event<IBasicDataSent> BasicDataSentEvent { get; private set; } = null!;

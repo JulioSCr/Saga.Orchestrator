@@ -12,7 +12,7 @@ namespace Saga.Orchestrator.API.Controllers
 
         protected IActionResult CustomResponse(object? result = null)
         {
-            if (OperacaoValida())
+            if (ValidOperation())
             {
                 return Ok(result);
             }
@@ -28,7 +28,7 @@ namespace Saga.Orchestrator.API.Controllers
             var erros = modelState.Values.SelectMany(e => e.Errors);
             foreach (var erro in erros)
             {
-                AdicionarErroProcessamento(erro.ErrorMessage);
+                AddProcessError(erro.ErrorMessage);
             }
 
             return CustomResponse();
@@ -38,7 +38,7 @@ namespace Saga.Orchestrator.API.Controllers
         {
             foreach (var erro in validationResult.Errors)
             {
-                AdicionarErroProcessamento(erro.ErrorMessage);
+                AddProcessError(erro.ErrorMessage);
             }
 
             return CustomResponse();
@@ -46,34 +46,34 @@ namespace Saga.Orchestrator.API.Controllers
 
         protected IActionResult CustomResponse(ResponseResult resposta)
         {
-            ResponsePossuiErros(resposta);
+            ResponseHasErrors(resposta);
 
             return CustomResponse();
         }
 
-        protected bool ResponsePossuiErros(ResponseResult resposta)
+        protected bool ResponseHasErrors(ResponseResult resposta)
         {
             if (resposta is null || !resposta.Errors.Mensagens.Any()) return false;
 
             foreach (var mensagem in resposta.Errors.Mensagens)
             {
-                AdicionarErroProcessamento(mensagem);
+                AddProcessError(mensagem);
             }
 
             return true;
         }
 
-        protected bool OperacaoValida()
+        protected bool ValidOperation()
         {
             return !Errors.Any();
         }
 
-        protected void AdicionarErroProcessamento(string erro)
+        protected void AddProcessError(string erro)
         {
             Errors.Add(erro);
         }
 
-        protected void LimparErrosProcessamento()
+        protected void ClearErrors()
         {
             Errors.Clear();
         }

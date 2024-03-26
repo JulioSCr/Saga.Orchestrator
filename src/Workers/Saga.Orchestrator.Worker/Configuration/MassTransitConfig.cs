@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Saga.Orchestrator.Worker.Application.BatchConsumers;
 using Saga.Orchestrator.Worker.Application.Consumers;
 using Saga.Orchestrator.Worker.Application.StateMachines;
-using Saga.Orchestrator.Core.Messages.IntegrationContracts.Commands;
 
 namespace Saga.Orchestrator.Worker.Configuration
 {
@@ -17,8 +16,12 @@ namespace Saga.Orchestrator.Worker.Configuration
             {
                 cfg.AddConsumersFromNamespaceContaining<SubmitFullExportConsumer>();
 
-                cfg.AddSagaStateMachine<FullExportStateMachine, FullExportState>(typeof(FullExportStateMachineDefinition))
-                    .RedisRepository(s => s.DatabaseConfiguration("localhost:6379"));
+                cfg.AddSagaStateMachine<FullExportStateMachine, FullExportState>(
+                    typeof(FullExportStateMachineDefinition));
+                //    .EntityFrameworkRepository(PostgresConfig.AddPostgresConfigurationMassTransit);
+
+                cfg.SetEntityFrameworkSagaRepositoryProvider(PostgresConfig.SetEntityFrameworkPostgresProvider);
+                //.RedisRepository(s => s.DatabaseConfiguration("localhost:6379"));
 
                 cfg.UsingRabbitMq((ctx, cfg) =>
                 {
