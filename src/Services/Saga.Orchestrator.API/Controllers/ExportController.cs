@@ -21,8 +21,8 @@ namespace Saga.Orchestrator.API.Controllers
 
         [HttpGet()]
         [ProducesResponseType(typeof(IFullExportStatus), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(IFullExportNotFound), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(IFullExportNotFound), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> GetStatus(Guid id)
         {
             var tasks = _checkFullExport.GetResponse<IFullExportStatus, IFullExportNotFound>(new
@@ -30,9 +30,9 @@ namespace Saga.Orchestrator.API.Controllers
                 ExportId = id
             });
 
-            tasks.Wait(10000);
+            tasks.Wait(5000);
 
-            if (!tasks.IsCompleted) return StatusCode(StatusCodes.Status500InternalServerError);
+            if (!tasks.IsCompleted) return StatusCode(StatusCodes.Status504GatewayTimeout);
 
             var (status, notFound) = await tasks;
 
@@ -51,28 +51,36 @@ namespace Saga.Orchestrator.API.Controllers
         [HttpPost()]
         [ProducesResponseType(typeof(IFullExportAccepted), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> Export(ExportRequest model)
         {
-            var task = _submitFullExport.GetResponse<IFullExportAccepted>(new
+            var tasks = _submitFullExport.GetResponse<IFullExportAccepted, IFullExportRejected>(new
             {
-                Cpf = new Cpf(model.Cpf)
+                Cpf = new Cpf(model.Cpf),
+                Timestamp = DateTime.UtcNow,
             });
 
-            task.Wait(11000);
+            tasks.Wait(5000);
 
-            if (task.IsCompletedSuccessfully)
+            if (!tasks.IsCompleted) return StatusCode(StatusCodes.Status504GatewayTimeout);
+
+            var (accepted, rejected) = await tasks;
+
+            if (accepted.IsCompletedSuccessfully)
             {
-                var response = await task;
+                var response = await accepted;
                 return Ok(response.Message);
             }
 
-            if (task.IsCompleted)
+            if (rejected.IsCompletedSuccessfully)
             {
-                var response = await task;
-                return BadRequest(response.Message);
+                var response = await rejected;
+                AddProcessError(response.Message.Reason);
+                return CustomResponse();
             }
 
-            return BadRequest("Falha ao enviar requisição");
+            AddProcessError("Ocorreu um erro não manipulado");
+            return CustomResponse();
         }
     }
 }

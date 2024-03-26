@@ -1,6 +1,7 @@
 ﻿using Saga.Orchestrator.Worker.Application.Activities;
 using Saga.Orchestrator.Worker.Application.BatchConsumers;
-using Saga.Orchestrator.Worker.Services;
+using Saga.Orchestrator.Worker.Infra.Interfaces;
+using Saga.Orchestrator.Worker.Infra.Repositories;
 
 namespace Saga.Orchestrator.Worker.Configuration
 {
@@ -11,7 +12,7 @@ namespace Saga.Orchestrator.Worker.Configuration
             services.AddScoped<SendBasicDataActivity>();
             services.AddScoped<SendComplementsActivity>();
             services.AddScoped<RoutingSlipBatchEventConsumer>();
-            services.AddHostedService<MassTransitConsoleHostedService>();
+            services.AddScoped<IFullExportStateRepository, FullExportStateRepository>();
         }
     }
 }
