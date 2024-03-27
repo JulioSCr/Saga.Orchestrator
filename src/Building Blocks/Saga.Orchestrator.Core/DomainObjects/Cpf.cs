@@ -10,10 +10,11 @@ namespace Saga.Orchestrator.Core.DomainObjects
         [JsonConstructor]
         public Cpf(string value)
         {
+            if (!Validate(value)) throw new DomainException("CPF inválido");
             Value = value;
         }
 
-        public static bool Validar(string cpf)
+        public static bool Validate(string cpf)
         {
             if (string.IsNullOrWhiteSpace(cpf)) return false;
 

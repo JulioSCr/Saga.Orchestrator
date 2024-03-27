@@ -1,6 +1,7 @@
 ﻿using MassTransit;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Saga.Orchestrator.Core.Messages.IntegrationContracts.Commands;
+using Saga.Orchestrator.Core.Messages.Integration.Commands;
+using Saga.Orchestrator.Core.Messages.Integration.Contracts;
 
 namespace Saga.Orchestrator.API.Configuration
 {
@@ -20,7 +21,7 @@ namespace Saga.Orchestrator.API.Configuration
                     MessageDataDefaults.AlwaysWriteToRepository = false;
             });
 
-                mt.AddRequestClient<ISubmitFullExport>(new Uri("exchange:submit-full-export"));
+                mt.AddRequestClient<SubmitFullExportCommand>(new Uri("exchange:submit-full-export"));
                 mt.AddRequestClient<ICheckStatus>(new Uri("queue:full-export-state"));
             });
         }

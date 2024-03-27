@@ -1,9 +1,9 @@
 ﻿using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Saga.Orchestrator.API.Models.Responses;
+using Saga.Orchestrator.Core.Messages.Integration.Responses;
 
-namespace Saga.Orchestrator.API.Controllers
+namespace Saga.Orchestrator.Core.Api.Controllers
 {
     [ApiController]
     public abstract class SagaControllerBase : ControllerBase
@@ -25,10 +25,10 @@ namespace Saga.Orchestrator.API.Controllers
 
         protected IActionResult CustomResponse(ModelStateDictionary modelState)
         {
-            var erros = modelState.Values.SelectMany(e => e.Errors);
-            foreach (var erro in erros)
+            var errors = modelState.Values.SelectMany(e => e.Errors);
+            foreach (var error in errors)
             {
-                AddProcessError(erro.ErrorMessage);
+                AddProcessError(error.ErrorMessage);
             }
 
             return CustomResponse();
@@ -36,31 +36,22 @@ namespace Saga.Orchestrator.API.Controllers
 
         protected IActionResult CustomResponse(ValidationResult validationResult)
         {
-            foreach (var erro in validationResult.Errors)
+            foreach (var error in validationResult.Errors)
             {
-                AddProcessError(erro.ErrorMessage);
+                AddProcessError(error.ErrorMessage);
             }
 
             return CustomResponse();
         }
 
-        protected IActionResult CustomResponse(ResponseResult resposta)
+        protected IActionResult CustomResponse(CustomResponse response)
         {
-            ResponseHasErrors(resposta);
-
-            return CustomResponse();
-        }
-
-        protected bool ResponseHasErrors(ResponseResult resposta)
-        {
-            if (resposta is null || !resposta.Errors.Mensagens.Any()) return false;
-
-            foreach (var mensagem in resposta.Errors.Mensagens)
+            foreach (var error in response.Errors)
             {
-                AddProcessError(mensagem);
+                AddProcessError(error);
             }
 
-            return true;
+            return CustomResponse();
         }
 
         protected bool ValidOperation()
@@ -68,9 +59,18 @@ namespace Saga.Orchestrator.API.Controllers
             return !Errors.Any();
         }
 
-        protected void AddProcessError(string erro)
+        protected void AddProcessError(string error)
         {
-            Errors.Add(erro);
+            Errors.Add(error);
+        }
+
+        protected void AddProcessError(IList<string>? errors)
+        {
+            if (errors is null) return;
+            foreach (var error in errors)
+            {
+                Errors.Add(error);
+            }
         }
 
         protected void ClearErrors()

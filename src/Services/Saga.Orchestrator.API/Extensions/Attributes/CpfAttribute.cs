@@ -16,7 +16,7 @@ namespace Saga.Orchestrator.API.Extensions.Attributes
                 return new ValidationResult(errorMessage, new[] { validationContext?.MemberName ?? "" });
             }
 
-            return Cpf.Validar(cpf) ? ValidationResult.Success : new ValidationResult(errorMessage, new[] { validationContext?.MemberName ?? "" });
+            return Cpf.Validate(cpf) ? ValidationResult.Success : new ValidationResult(errorMessage, new[] { validationContext?.MemberName ?? "" });
         }
     }
 }
